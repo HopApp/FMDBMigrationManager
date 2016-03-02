@@ -68,19 +68,19 @@ static NSArray *FMDBClassesConformingToProtocol(Protocol *protocol)
 
 @implementation FMDBMigrationManager
 
-+ (instancetype)managerWithDatabaseAtPath:(NSString *)path migrationsBundle:(NSBundle *)bundle
++ (instancetype)managerWithDatabaseAtPath:(NSString *)path migrationsBundle:(NSBundle *)bundle directoryName:(NSString *)directoryName
 {
     FMDatabase *database = [FMDatabase databaseWithPath:path];
-    return [[self alloc] initWithDatabase:database migrationsBundle:bundle];
+    return [[self alloc] initWithDatabase:database migrationsBundle:bundle directoryName:directoryName];
 }
 
-+ (instancetype)managerWithDatabase:(FMDatabase *)database migrationsBundle:(NSBundle *)bundle
++ (instancetype)managerWithDatabase:(FMDatabase *)database migrationsBundle:(NSBundle *)bundle directoryName:(NSString *)directoryName
 {
-    return [[self alloc] initWithDatabase:database migrationsBundle:bundle];
+    return [[self alloc] initWithDatabase:database migrationsBundle:bundle directoryName:directoryName];
 }
 
 // Designated initializer
-- (id)initWithDatabase:(FMDatabase *)database migrationsBundle:(NSBundle *)migrationsBundle
+- (id)initWithDatabase:(FMDatabase *)database migrationsBundle:(NSBundle *)migrationsBundle directoryName:(NSString *)directoryName
 {
     if (!database) [NSException raise:NSInvalidArgumentException format:@"Cannot initialize a `%@` with nil `database`.", [self class]];
     if (!migrationsBundle) [NSException raise:NSInvalidArgumentException format:@"Cannot initialize a `%@` with nil `migrationsBundle`.", [self class]];
@@ -88,6 +88,7 @@ static NSArray *FMDBClassesConformingToProtocol(Protocol *protocol)
     if (self) {
         _database = database;
         _migrationsBundle = migrationsBundle;
+        _directoryName = directoryName;
         _dynamicMigrationsEnabled = YES;
         _externalMigrations = [NSMutableArray new];
         if (![database goodConnection]) {
@@ -204,7 +205,7 @@ static NSArray *FMDBClassesConformingToProtocol(Protocol *protocol)
     // Memoize the migrations list
     if (_migrations) return _migrations;
     
-    NSArray *migrationPaths = [self.migrationsBundle pathsForResourcesOfType:@"sql" inDirectory:nil];
+    NSArray *migrationPaths = [self.migrationsBundle pathsForResourcesOfType:@"sql" inDirectory:self.directoryName];
     NSRegularExpression *migrationRegex = [NSRegularExpression regularExpressionWithPattern:FMDBMigrationFilenameRegexString options:0 error:nil];
     NSMutableArray *migrations = [NSMutableArray new];
     for (NSString *path in migrationPaths) {

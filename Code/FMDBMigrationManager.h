@@ -37,17 +37,19 @@
  @abstract Creates a new migration manager with a given database and migrations bundle.
  @param database The database with which to initialize the migration manager.
  @param bundle The bundle containing the migrations.
+ @param directoryName The name of the directory in bundle containing the migrations.
  @return A new migration manager.
  */
-+ (instancetype)managerWithDatabase:(FMDatabase *)database migrationsBundle:(NSBundle *)bundle;
++ (instancetype)managerWithDatabase:(FMDatabase *)database migrationsBundle:(NSBundle *)bundle directoryName:(NSString *)directoryName;
 
 /**
  @abstract Creates a new migration manager with a database for the given database and migrations bundle.
  @param path The path to a database with which to initialize the migration manager.
  @param bundle The bundle containing the migrations.
+@param directoryName The name of the directory in bundle containing the migrations.
  @return A new migration manager.
  */
-+ (instancetype)managerWithDatabaseAtPath:(NSString *)path migrationsBundle:(NSBundle *)bundle;
++ (instancetype)managerWithDatabaseAtPath:(NSString *)path migrationsBundle:(NSBundle *)bundle directoryName:(NSString *)directoryName;
 
 /**
  @abstract Determines whether the receiver will perform a search for dynamically defined migrations. Default: `YES`.
@@ -68,6 +70,11 @@
  @abstract Returns the migrations bundle for the receiver.
  */
 @property (nonatomic, readonly) NSBundle *migrationsBundle;
+
+/**
+ @abstract Returns the directiory name for the migrations bundle for the receiver.
+ */
+@property (nonatomic, readonly) NSString *directoryName;
 
 ///-----------------------------
 /// @name Accessing Version Info
